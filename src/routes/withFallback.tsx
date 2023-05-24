@@ -1,6 +1,6 @@
 import React from 'react';
 
-import SuspendFallbackLoading from '@components/SuspendFallbackLoading';
+import SuspendFallbackLoading from '~/components/SuspendFallbackLoading';
 
 export const withFallback =
   <T,>(Component: React.FC<T>) =>

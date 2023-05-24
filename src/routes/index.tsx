@@ -1,8 +1,8 @@
 import React from 'react';
-import { Route, RouteObject } from 'react-router';
+import { RouteObject } from 'react-router';
 import { useRoutes } from 'react-router-dom';
 
-import LayoutPage from '~/layouts/MainLayout';
+import LayoutPage from '../layouts/MainLayout';
 import { withFallback } from './withFallback';
 import { lazyRetry } from '~/helpers/codeSplitting';
 
@@ -10,26 +10,26 @@ const NotFound = withFallback(
   React.lazy(() => lazyRetry(() => import('~/pages/404'), '404'))
 );
 
-const RfpDetails = withFallback(
+const Payments = withFallback(
   React.lazy(() =>
-    lazyRetry(() => import('~/pages/RFP/RfpDetails'), 'rfp-details')
+    lazyRetry(() => import('~/pages/PaymentsPage'), 'payment')
   )
 );
 
 export const routeList: RouteObject[] = [
   {
     path: '',
-    element: <Route element={<LayoutPage />} />,
+    element: <LayoutPage />,
     children: [
       {
-        path: ':merchantId',
-        element: <Route element={<RfpDetails />} />,
+        path: 'payments/:merchantId',
+        element: <Payments />,
       },
     ],
   },
   {
     path: '*',
-    element: <Route element={<NotFound />} />,
+    element: <NotFound />,
   },
 ];
 
