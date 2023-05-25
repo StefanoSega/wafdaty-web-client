@@ -11,9 +11,7 @@ interface InputCardProps {
 const InputCard: React.FC<InputCardProps> = ({ title, children }) => {
     return <Container>
     <div>{title}</div>
-    <InputContainer>
     {children}
-    </InputContainer>
     </Container>;
   };
 
@@ -25,11 +23,5 @@ const InputCard: React.FC<InputCardProps> = ({ title, children }) => {
 border-radius: ${px2rem(8)};
 padding: ${px2rem(12)};
 `;
-
-  const InputContainer = styled.div`
-    display: flex;
-    gap: ${px2rem(16)};
-  align-items: center;
-  `;
 
 export default InputCard;
