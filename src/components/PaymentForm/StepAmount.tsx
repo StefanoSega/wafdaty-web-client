@@ -6,16 +6,24 @@ import { px2rem } from '~/helpers/styles';
 import InputCard from '../form/InputCard';
 import ApplePayImage from "~/assets/apple-pay.png";
 import CreditCardImage from "~/assets/credit-card.png";
-import NewCardForm from './NewCardForm';
+import NewCardForm, { CardDetails } from './NewCardForm';
 
 const StepAmount: React.FC = () => {
 const [paymentType, setPaymentType] = useState();
+const [newCardDetails, setNewCardDetails] = useState<Partial<CardDetails>>();
+const [amount, setAmount] = useState<number>();
+
+    const canPay = amount && newCardDetails?.isNumberValid 
+    && newCardDetails.isExpValid && newCardDetails.isCvcValid
+    && newCardDetails.name;
 
     return <>
     <InputCard title='Type the amount to pay'>
     <InputAmountContainer>
     <LabelAmount>AED</LabelAmount>
-        <InputAmount placeholder='0.00' type='number' />
+        <InputAmount placeholder='0.00' type='number' value={amount}
+        onChange={e => setAmount(e.target.value ? Number(e.target.value) : undefined)}
+        />
     </InputAmountContainer>
     </InputCard>
     <InputCard title='Do you want to receive an invoice? Type here your phone number'>
@@ -42,10 +50,18 @@ const [paymentType, setPaymentType] = useState();
         </RadioPaymentType>
       </Space>
     </Radio.Group>
-    {paymentType === "new-card" && <NewCardForm />}
+    {paymentType === "new-card" && <NewCardForm
+    value={newCardDetails as CardDetails | undefined}
+    onChange={(newValue) => setNewCardDetails((prevValue) => ({
+      ...prevValue,
+      ...newValue
+    }))}
+    />}
     </InputCard>
         <ButtonContainer>
-            <PayButton shape="round" size='large' type="primary">Pay</PayButton>
+            <PayButton shape="round" size='large' type="primary"
+            disabled={!canPay}
+            >Pay</PayButton>
         </ButtonContainer>
         </>;
   };
@@ -99,6 +115,11 @@ const PayButton = styled(Button)`
 width: ${px2rem(128)};
 background: rgb(2,241,166);
 background: linear-gradient(135deg, rgba(2,241,166,1) 0%, rgba(0,222,255,1) 100%);
+transition: 0.3s ease-in opacity;
+
+&:disabled {
+  opacity: 0.5;
+}
 `;
 
 export default StepAmount;
