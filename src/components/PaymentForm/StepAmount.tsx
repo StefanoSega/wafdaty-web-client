@@ -13,9 +13,10 @@ const [paymentType, setPaymentType] = useState();
 const [newCardDetails, setNewCardDetails] = useState<Partial<CardDetails>>();
 const [amount, setAmount] = useState<number>();
 
-    const canPay = amount && newCardDetails?.isNumberValid 
+    const isNewCardValid = newCardDetails?.isNumberValid 
     && newCardDetails.isExpValid && newCardDetails.isCvcValid
     && newCardDetails.name;
+    const canPay = amount && (paymentType === "new-card" ? isNewCardValid : true);
 
     return <>
     <InputCard title='Type the amount to pay'>

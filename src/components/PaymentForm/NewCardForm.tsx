@@ -69,7 +69,7 @@ const NewCardForm: React.FC<NewCardFormProps> = ({ value, onChange }) => {
 
           return (
             <div>
-              <p>Number</p>
+              <FieldLabel>Number</FieldLabel>
               <Input 
               {...getInputProps() } 
               maxLength={19}
@@ -83,16 +83,15 @@ const NewCardForm: React.FC<NewCardFormProps> = ({ value, onChange }) => {
           );
         }} />
     </div>
-    <div>
+    <ExpCvcRow>
     <Expiration
       onChange={handleExpirationChange}
       render={({
-        getInputProps,
-        valid,
-        error
+        getInputProps
       }) => (
         <div>
-          <Input 
+          <FieldLabel>Expiry Date</FieldLabel>
+              <Input 
           {...getInputProps()}
           maxLength={7}
               name='exp-date'
@@ -100,8 +99,6 @@ const NewCardForm: React.FC<NewCardFormProps> = ({ value, onChange }) => {
           />
         </div>
       )} />
-    </div>
-    <div>
     <Cvc
       masked
       onChange={handleCvcChange}
@@ -109,6 +106,7 @@ const NewCardForm: React.FC<NewCardFormProps> = ({ value, onChange }) => {
         getInputProps,
       }) => (
         <div>
+          <FieldLabel>CVC</FieldLabel>
           <Input 
           {...getInputProps()}
           maxLength={3}
@@ -117,8 +115,9 @@ const NewCardForm: React.FC<NewCardFormProps> = ({ value, onChange }) => {
           />
         </div>
       )} />
-    </div>
+    </ExpCvcRow>
     <div>
+    <FieldLabel>Owner Name</FieldLabel>
     <Input 
           maxLength={22}
               name='cc-name'
@@ -138,6 +137,17 @@ onChange={(e) => onChange({
 
   const CardImageWrapper = styled.div`
   width: ${px2rem(25)};
+  `;
+
+  const FieldLabel = styled.p`
+  font-size: ${px2rem(12)};
+  margin-top: 0;
+  margin-bottom: ${px2rem(4)};
+  `;
+
+  const ExpCvcRow = styled.div`
+  display: flex;
+  gap: ${px2rem(12)};
   `;
 
 export default NewCardForm;
