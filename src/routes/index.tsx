@@ -11,9 +11,7 @@ const NotFound = withFallback(
 );
 
 const Payments = withFallback(
-  React.lazy(() =>
-    lazyRetry(() => import('~/pages/PaymentsPage'), 'payment')
-  )
+  React.lazy(() => lazyRetry(() => import('~/pages/PaymentsPage'), 'payment'))
 );
 
 export const routeList: RouteObject[] = [

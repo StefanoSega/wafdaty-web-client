@@ -1,13 +1,13 @@
-declare module "react-credit-card-primitives" {
-export interface NumberChangeEvent {
-type: string;
-value: string;
-valid: boolean;
-setValue: any;
-getInputProps: any;
-}
+declare module 'react-credit-card-primitives' {
+  export interface NumberChangeEvent {
+    type: string;
+    value: string;
+    valid: boolean;
+    setValue: any;
+    getInputProps: any;
+  }
 
-interface NumberProps {
+  interface NumberProps {
     value?: string;
     defaultValue?: string;
     onChange?: (value: NumberChangeEvent) => void;
@@ -15,50 +15,47 @@ interface NumberProps {
     masked?: boolean;
     cardTypes?: Array<string>;
     creditcards?: any;
-}
+  }
 
-export interface ExpirationChangeEvent {
+  export interface ExpirationChangeEvent {
     month: number;
     year: number;
     valid: boolean;
     getInputProps: any;
     error: any;
-}
+  }
 
-interface ExpirationProps {
+  interface ExpirationProps {
     month?: number;
-  year?: number;
-  defaultMonth?: number;
-  defaultYear?: number;
-  onChange?: (value: ExpirationChangeEvent) => void;
+    year?: number;
+    defaultMonth?: number;
+    defaultYear?: number;
+    onChange?: (value: ExpirationChangeEvent) => void;
     render: (value: ExpirationChangeEvent) => React.ReactNode;
     creditcards?: any;
-}
+  }
 
-export interface CvcChangeEvent {
+  export interface CvcChangeEvent {
     focused: boolean;
     value: number;
-        valid: boolean;
-setValue: any;
-getInputProps: any;
-}
+    valid: boolean;
+    setValue: any;
+    getInputProps: any;
+  }
 
-interface CvcProps {
+  interface CvcProps {
     value?: string;
     defaultValue?: string;
     masked?: boolean;
-  cardType?: string;
-  onChange?: (value: CvcChangeEvent) => void;
+    cardType?: string;
+    onChange?: (value: CvcChangeEvent) => void;
     render: (value: CvcChangeEvent) => React.ReactNode;
     creditcards?: any;
-}
-
-  export class Number extends React.Component<NumberProps> {
   }
 
-  export class Expiration extends React.Component<ExpirationProps> {
-}
+  export class Number extends React.Component<NumberProps> {}
 
-export class Cvc extends React.Component<CvcProps> {
-}
+  export class Expiration extends React.Component<ExpirationProps> {}
+
+  export class Cvc extends React.Component<CvcProps> {}
 }

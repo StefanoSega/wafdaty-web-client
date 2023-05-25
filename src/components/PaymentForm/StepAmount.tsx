@@ -12,14 +12,18 @@ import NewCardForm, { CardDetails } from './NewCardForm';
 const StepAmount: React.FC = () => {
   const [paymentType, setPaymentType] = useState();
   const [newCardDetails, setNewCardDetails] = useState<Partial<CardDetails>>();
-  const [amount, setAmount] = useState<number>();
+  const [amount, setAmount] = useState<string>();
 
   const isNewCardValid =
     newCardDetails?.isNumberValid &&
     newCardDetails.isExpValid &&
     newCardDetails.isCvcValid &&
     newCardDetails.name;
-  const canPay = amount && (paymentType === 'new-card' ? isNewCardValid : true);
+  const isAmountNumber = amount && !isNaN(Number(amount));
+  const canPay =
+    isAmountNumber &&
+    Number(amount) > 0 &&
+    (paymentType === 'new-card' ? isNewCardValid : true);
 
   return (
     <>
@@ -30,9 +34,7 @@ const StepAmount: React.FC = () => {
             placeholder="0.00"
             type="number"
             value={amount}
-            onChange={(e) =>
-              setAmount(e.target.value ? Number(e.target.value) : undefined)
-            }
+            onChange={(e) => setAmount(e.target.value)}
           />
         </InputAmountContainer>
       </InputCard>
@@ -161,6 +163,7 @@ const InputPhone = styled(Input)`
   .ant-input-group-addon,
   .ant-input {
     border: 0;
+    background: none;
   }
 `;
 

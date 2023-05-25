@@ -1,5 +1,5 @@
 export type Merchant = {
-    id: string;
-    name: string;
-    logoUrl: string;
-}
+  id: string;
+  name: string;
+  logoUrl: string;
+};

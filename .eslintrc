@@ -10,7 +10,7 @@
     }
   },
   "rules": {
-    "jsx-quotes": ["prefer-double"],
+    "jsx-quotes": [2, "prefer-double"],
     "object-curly-spacing": ["warn", "always"],
     "no-unused-vars": [
       "warn",
