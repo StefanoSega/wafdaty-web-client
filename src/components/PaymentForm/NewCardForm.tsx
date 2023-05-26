@@ -22,17 +22,22 @@ export interface CardDetails {
   year: number;
   cvc: number;
   name: string;
+}
+
+interface CardValidation {
   isNumberValid: boolean;
   isExpValid: boolean;
   isCvcValid: boolean;
 }
 
+export interface CardForm extends CardDetails, CardValidation {}
+
 interface NewCardFormProps {
-  value: CardDetails | undefined;
-  onChange: (value: Partial<CardDetails>) => void;
+  value: CardForm | undefined;
+  onChange: (value: Partial<CardForm>) => void;
 }
 
-const getCardImage = (type: string) => {
+export const getCardImage = (type: string) => {
   switch (type) {
     case 'Visa':
       return VisaImage;

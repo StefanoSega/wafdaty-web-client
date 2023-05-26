@@ -2,6 +2,7 @@ import { Button, Input, Radio, Space } from 'antd';
 import React, { useCallback, useState } from 'react';
 import styled from 'styled-components';
 import DeviceDetector from 'device-detector-js';
+import { Cvc, CvcChangeEvent } from 'react-credit-card-primitives';
 
 import { px2rem } from '~/helpers/styles';
 import InputCard from '../form/InputCard';
@@ -9,17 +10,43 @@ import UaeFlagImage from '~/assets/uae-flag.png';
 import ApplePayImage from '~/assets/apple-pay.png';
 import GooglePayImage from '~/assets/google-pay.png';
 import CreditCardImage from '~/assets/credit-card.png';
-import NewCardForm, { CardDetails } from './NewCardForm';
+import NewCardForm, {
+  CardDetails,
+  CardForm,
+  getCardImage,
+} from './NewCardForm';
 
 interface StepAmountProps {
-  onPay: (amount: number, phoneNumber?: string) => void;
+  onPay: (amount: number, phoneNumber?: string, card?: CardDetails) => void;
+  storedCards?: Array<Omit<CardDetails, 'cvc'>>;
 }
 
-const StepAmount: React.FC<StepAmountProps> = ({ onPay }) => {
-  const [paymentType, setPaymentType] = useState();
-  const [newCardDetails, setNewCardDetails] = useState<Partial<CardDetails>>();
+interface StoredCardCvc {
+  cvc: number;
+  isValid: boolean;
+}
+
+const isSelectedStoredCardValid = (
+  paymentType: string,
+  storedCardsCvc: Record<string, StoredCardCvc>
+) => {
+  const number = paymentType.substring(3);
+  const cvc = storedCardsCvc[number];
+  if (!cvc) {
+    return false;
+  }
+
+  return cvc.isValid;
+};
+
+const StepAmount: React.FC<StepAmountProps> = ({ onPay, storedCards }) => {
+  const [paymentType, setPaymentType] = useState<string>();
+  const [newCardDetails, setNewCardDetails] = useState<Partial<CardForm>>();
   const [amount, setAmount] = useState<string>();
   const [phoneNumber, setPhoneNumber] = useState<string>();
+  const [storedCardsCvc, setStoredCardsCvc] = useState<
+    Record<string, StoredCardCvc>
+  >({});
   const deviceDetector = React.useRef(new DeviceDetector());
 
   const isNewCardValid =
@@ -31,7 +58,10 @@ const StepAmount: React.FC<StepAmountProps> = ({ onPay }) => {
   const canPay =
     isAmountNumber &&
     Number(amount) > 0 &&
-    (paymentType === 'new-card' ? isNewCardValid : true);
+    (paymentType === 'new-card' ? isNewCardValid : true) &&
+    (paymentType?.startsWith('cc-')
+      ? isSelectedStoredCardValid(paymentType, storedCardsCvc)
+      : true);
 
   const deviceDetails = deviceDetector.current.parse(
     window.navigator.userAgent
@@ -40,8 +70,34 @@ const StepAmount: React.FC<StepAmountProps> = ({ onPay }) => {
   const isAndroid = deviceDetails.os?.name === 'Android';
 
   const handlePay = useCallback(() => {
-    onPay(Number(amount), phoneNumber ? `+971${phoneNumber}` : undefined);
-  }, [amount, onPay, phoneNumber]);
+    onPay(
+      Number(amount),
+      phoneNumber ? `+971${phoneNumber}` : undefined,
+      newCardDetails
+        ? {
+            number: newCardDetails.number!,
+            month: newCardDetails.month!,
+            year: newCardDetails.year!,
+            name: newCardDetails.name!,
+            cardType: newCardDetails.cardType!,
+            cvc: newCardDetails.cvc!,
+          }
+        : undefined
+    );
+  }, [amount, newCardDetails, onPay, phoneNumber]);
+
+  const handleCvcChange = useCallback(
+    (cardNumber: string, changeValue: CvcChangeEvent) => {
+      setStoredCardsCvc((prevValue) => ({
+        ...prevValue,
+        [cardNumber]: {
+          cvc: changeValue.value,
+          isValid: changeValue.valid,
+        },
+      }));
+    },
+    []
+  );
 
   return (
     <>
@@ -96,6 +152,35 @@ const StepAmount: React.FC<StepAmountProps> = ({ onPay }) => {
                 </PaymentTypeWrapper>
               </RadioPaymentType>
             )}
+            {storedCards?.map((storedCard) => (
+              <RadioPaymentType
+                key={storedCard.number}
+                value={`cc-${storedCard.number}`}
+              >
+                <PaymentTypeWrapper>
+                  <PaymentTypeIconWrapper>
+                    <PaymentTypeIcon src={getCardImage(storedCard.cardType)} />
+                  </PaymentTypeIconWrapper>
+                  <PaymentTypeStoredCardLabel>
+                    <span>•••• {storedCard.number.slice(-4)}</span>
+                    <Cvc
+                      masked
+                      onChange={(changeValue: CvcChangeEvent) =>
+                        handleCvcChange(storedCard.number, changeValue)
+                      }
+                      render={({ getInputProps }) => (
+                        <InputCvc
+                          {...getInputProps()}
+                          maxLength={3}
+                          name="cvc"
+                          autoComplete="cc-csc"
+                        />
+                      )}
+                    />
+                  </PaymentTypeStoredCardLabel>
+                </PaymentTypeWrapper>
+              </RadioPaymentType>
+            ))}
             <RadioPaymentType value="new-card">
               <PaymentTypeWrapper>
                 <PaymentTypeIconWrapper>
@@ -108,7 +193,7 @@ const StepAmount: React.FC<StepAmountProps> = ({ onPay }) => {
         </Radio.Group>
         {paymentType === 'new-card' && (
           <NewCardForm
-            value={newCardDetails as CardDetails | undefined}
+            value={newCardDetails as CardForm | undefined}
             onChange={(newValue) =>
               setNewCardDetails((prevValue) => ({
                 ...prevValue,
@@ -159,6 +244,18 @@ const PaymentTypeWrapper = styled.div`
   height: ${px2rem(30)};
   align-items: center;
   gap: ${px2rem(12)};
+`;
+
+const PaymentTypeStoredCardLabel = styled.span`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: ${px2rem(12)};
+`;
+
+const InputCvc = styled(Input)`
+  width: ${px2rem(64)};
+  border: 0;
 `;
 
 const InputAmount = styled(Input)`
