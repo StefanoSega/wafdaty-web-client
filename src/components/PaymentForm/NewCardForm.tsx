@@ -11,6 +11,7 @@ import {
 
 import VisaImage from '~/assets/cc-visa.png';
 import MastercardImage from '~/assets/cc-mastercard.png';
+import CcPlaceholderImage from '~/assets/cc-placeholder.png';
 import { styled } from 'styled-components';
 import { px2rem } from '~/helpers/styles';
 
@@ -38,7 +39,7 @@ const getCardImage = (type: string) => {
     case 'Mastercard':
       return MastercardImage;
     default:
-      return;
+      return CcPlaceholderImage;
   }
 };
 
@@ -85,7 +86,7 @@ const NewCardForm: React.FC<NewCardFormProps> = ({ value, onChange }) => {
                   autoComplete="cc-number"
                   addonBefore={
                     <CardImageWrapper>
-                      {cardImage && <CardImage src={cardImage} alt={type} />}
+                      <CardImage src={cardImage} alt={type} />
                     </CardImageWrapper>
                   }
                 />

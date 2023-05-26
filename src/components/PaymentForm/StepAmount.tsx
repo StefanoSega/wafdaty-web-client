@@ -1,18 +1,26 @@
 import { Button, Input, Radio, Space } from 'antd';
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import styled from 'styled-components';
+import DeviceDetector from 'device-detector-js';
 
 import { px2rem } from '~/helpers/styles';
 import InputCard from '../form/InputCard';
 import UaeFlagImage from '~/assets/uae-flag.png';
 import ApplePayImage from '~/assets/apple-pay.png';
+import GooglePayImage from '~/assets/google-pay.png';
 import CreditCardImage from '~/assets/credit-card.png';
 import NewCardForm, { CardDetails } from './NewCardForm';
 
-const StepAmount: React.FC = () => {
+interface StepAmountProps {
+  onPay: (amount: number, phoneNumber?: string) => void;
+}
+
+const StepAmount: React.FC<StepAmountProps> = ({ onPay }) => {
   const [paymentType, setPaymentType] = useState();
   const [newCardDetails, setNewCardDetails] = useState<Partial<CardDetails>>();
   const [amount, setAmount] = useState<string>();
+  const [phoneNumber, setPhoneNumber] = useState<string>();
+  const deviceDetector = React.useRef(new DeviceDetector());
 
   const isNewCardValid =
     newCardDetails?.isNumberValid &&
@@ -24,6 +32,16 @@ const StepAmount: React.FC = () => {
     isAmountNumber &&
     Number(amount) > 0 &&
     (paymentType === 'new-card' ? isNewCardValid : true);
+
+  const deviceDetails = deviceDetector.current.parse(
+    window.navigator.userAgent
+  );
+  const isIos = deviceDetails.os?.name === 'iOS';
+  const isAndroid = deviceDetails.os?.name === 'Android';
+
+  const handlePay = useCallback(() => {
+    onPay(Number(amount), phoneNumber ? `+971${phoneNumber}` : undefined);
+  }, [amount, onPay, phoneNumber]);
 
   return (
     <>
@@ -47,6 +65,8 @@ const StepAmount: React.FC = () => {
             </InputPhonePre>
           }
           placeholder="550001111"
+          onChange={(e) => setPhoneNumber(e.target.value)}
+          value={phoneNumber}
         />
       </InputCard>
       <InputCard title="Payment method">
@@ -56,14 +76,26 @@ const StepAmount: React.FC = () => {
           value={paymentType}
         >
           <Space direction="vertical">
-            <RadioPaymentType value={1}>
-              <PaymentTypeWrapper>
-                <PaymentTypeIconWrapper>
-                  <PaymentTypeIcon src={ApplePayImage} />
-                </PaymentTypeIconWrapper>
-                Apple Pay
-              </PaymentTypeWrapper>
-            </RadioPaymentType>
+            {isIos && (
+              <RadioPaymentType value="apple-pay">
+                <PaymentTypeWrapper>
+                  <PaymentTypeIconWrapper>
+                    <PaymentTypeIcon src={ApplePayImage} />
+                  </PaymentTypeIconWrapper>
+                  Apple Pay
+                </PaymentTypeWrapper>
+              </RadioPaymentType>
+            )}
+            {isAndroid && (
+              <RadioPaymentType value="google-pay">
+                <PaymentTypeWrapper>
+                  <PaymentTypeIconWrapper>
+                    <PaymentTypeIcon src={GooglePayImage} />
+                  </PaymentTypeIconWrapper>
+                  Google Pay
+                </PaymentTypeWrapper>
+              </RadioPaymentType>
+            )}
             <RadioPaymentType value="new-card">
               <PaymentTypeWrapper>
                 <PaymentTypeIconWrapper>
@@ -87,7 +119,13 @@ const StepAmount: React.FC = () => {
         )}
       </InputCard>
       <ButtonContainer>
-        <PayButton shape="round" size="large" type="primary" disabled={!canPay}>
+        <PayButton
+          shape="round"
+          size="large"
+          type="primary"
+          disabled={!canPay}
+          onClick={handlePay}
+        >
           Pay
         </PayButton>
       </ButtonContainer>

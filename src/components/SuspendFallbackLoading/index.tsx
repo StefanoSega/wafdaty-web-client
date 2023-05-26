@@ -6,7 +6,7 @@ import { LoadingOutlined } from '@ant-design/icons';
 import { px2rem } from '~/helpers/styles';
 
 const SuspendFallbackLoading: React.FC = () => {
-  return <StyledSpinner indicator={<SpinnerIcon spin rev />} />;
+  return <StyledSpinner indicator={<SpinnerIcon spin rev="" />} />;
 };
 
 const StyledSpinner = styled(Spin)`
