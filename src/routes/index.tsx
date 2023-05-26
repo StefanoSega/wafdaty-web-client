@@ -14,7 +14,15 @@ const Payments = withFallback(
   React.lazy(() => lazyRetry(() => import('~/pages/PaymentsPage'), 'payment'))
 );
 
+const QrCode = withFallback(
+  React.lazy(() => lazyRetry(() => import('~/pages/QrCodePage'), 'qr-code'))
+);
+
 export const routeList: RouteObject[] = [
+  {
+    path: 'qrcode/:merchantId',
+    element: <QrCode />,
+  },
   {
     path: '',
     element: <LayoutPage />,

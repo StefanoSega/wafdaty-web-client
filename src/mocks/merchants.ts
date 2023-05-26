@@ -6,5 +6,7 @@ export const MERCHANTS_MOCK: Array<Merchant> = [
     name: 'Ravi Restaurant',
     logoUrl:
       'https://www.expo2020dubai.com/-/media/expo2020/dining/ravi-restaurant/ravi-restaurant-logo-x200.png',
+      color1: '#4f9a70',
+      color2: '#00ff70'
   },
 ];

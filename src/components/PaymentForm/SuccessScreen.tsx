@@ -44,7 +44,7 @@ const Container = styled.div`
 const LogoWrapper = styled.div`
   background: #fff;
   border-radius: ${px2rem(8)};
-  border: solid ${px2rem(2)} #f9f9f9;
+  box-shadow: 0px 1px 6px 1px #f9f9f9;
   position: absolute;
   left: 50%;
   top: ${px2rem(178)};
