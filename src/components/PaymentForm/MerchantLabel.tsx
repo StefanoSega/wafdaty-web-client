@@ -34,7 +34,6 @@ const Container = styled.div`
   align-items: center;
   gap: ${px2rem(8)};
   background-color: #fff;
-  margin: ${px2rem(16)} 0;
   border-radius: ${px2rem(8)};
   padding: ${px2rem(12)};
 `;

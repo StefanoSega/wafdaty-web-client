@@ -49,7 +49,7 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${px2rem(16)};
-  margin: 0 ${px2rem(16)} ${px2rem(16)} ${px2rem(16)};
+  margin: ${px2rem(16)};
 `;
 
 export default PaymentSteps;
